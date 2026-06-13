@@ -1,17 +1,4 @@
 
-https://movie-recommendation-system-5ht7d2dwzpebvuuejbpp7a.streamlit.app/
-📌 Features
-🎥 Movie recommendation based on similarity
-🖼️ Dynamic movie posters using OMDb API
-🎨 Modern dark-themed UI with hover card effects
-⚡ Fast recommendation generation
-📱 Responsive Streamlit layout
-🔍 Content-based filtering using NLP techniques
-
-
-
-
-
 # 🎬 Movie Recommendation System
 
 A content-based Movie Recommendation System built using **Streamlit**  powered by a **Machine Learning** and uses the **OMDb API** for Fetching Movie posters.
@@ -106,7 +93,7 @@ Then converts the text into numerical vectors using TF-IDF and calculates simila
 
 ## 📸 Screenshots
 
-Add screenshots of your app here.
+![Movie Recommendation App](app_screenshot.png)
 
 ---
 
