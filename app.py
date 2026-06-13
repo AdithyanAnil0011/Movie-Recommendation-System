@@ -6,43 +6,41 @@ import requests
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Page Configuration & Custom CSS Background
+# APP Background Styling
 page_bg_img = """
 <style>
 [data-testid="stAppViewContainer"] {
-    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url("https://cdn.wallpapersafari.com/24/74/zgeTuV.jpg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-image:linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url("https://cdn.wallpapersafari.com/24/74/zgeTuV.jpg");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
 }
 
 [data-testid="stHeader"] {
-    background: rgba(0,0,0,0);
+    background:rgba(0,0,0,0);
 }
 </style>
 """
+st.markdown(page_bg_img,unsafe_allow_html=True)
 
-st.markdown(page_bg_img, unsafe_allow_html=True)
-
-selected_features=['genres','keywords','overview','cast','director']
-
+selected_features=['genres','keywords','overview','cast','director']   #selected features for better recommendatiosn  
 
 # Load Data Safely
 movies = pd.read_csv("moviesdata.csv")
 
-# similarity = pickle.load(open('similarity.pkl', 'rb'))
+# similarity = pickle.load(open('similarity.pkl', 'rb'))   [Could not load similarity.pkl File directly to github since the file was too large]
 for feature in selected_features:
     movies[feature] = movies[feature].fillna('')
 
 combined_features=(movies['genres']+' '+movies['keywords']+' '+movies['overview']+' '+movies['cast']+' '+movies['director'])
 
-vectorizer = TfidfVectorizer()
-feature_vectors = vectorizer.fit_transform(combined_features)
+vectorizer =TfidfVectorizer()
+feature_vectors =vectorizer.fit_transform(combined_features)
 
-similarity = cosine_similarity(feature_vectors)
+similarity =cosine_similarity(feature_vectors)
 
-# Fetch Movie Poster with API Fail-safes
+# Fetch Movie Poster with API(Used OMDB API)
 def fetch_poster(movie_name):
     movie_name = movie_name.replace(" ", "+")
     url = f"http://www.omdbapi.com/?t={movie_name}&apikey=35ba7859"
@@ -59,7 +57,7 @@ def recommend(movie):
     distances = similarity[movie_index]
     
     # Grabs top 9 recommendations
-    movie_list = sorted(list(enumerate(distances)), key=lambda x: x[1], reverse=True)[1:10]
+    movie_list = sorted(list(enumerate(distances)), key=lambda x: x[1], reverse=True)[1:10]    # sorting on the basis of priority of movies
     
     recommended_movies = [] 
     recommended_posters = []
@@ -71,7 +69,7 @@ def recommend(movie):
         
     return recommended_movies, recommended_posters
 
-# Custom UI Elements Styling
+# UI Styling
 st.markdown(""" <h1 style='text-align: left; color: white; font-size: 50px; font-weight: bold; margin-bottom: 30px;'> 🎬 Movie Recommendation System </h1> """, unsafe_allow_html=True)
 
 st.markdown("""
@@ -131,20 +129,17 @@ div[data-baseweb="select"] > div {
 </style>
 """, unsafe_allow_html=True)
 
-# User Input
+# Input from the user
 selected_movie = st.selectbox(
     'Enter the name of your Favourite Movie',
     movies['title'].values
 )
 
-
 if st.button('Recommend'):
  placeholder = st.empty()
  with st.spinner('Fetching movie recommendations...'):
-    
      name, posters = recommend(selected_movie)
-    
-    # Create 3 rows of 3 columns (Total 9 items)
+    # Create 3 rows of 3 columns
      for i in range(0, len(name), 3):
         cols = st.columns(3)
         for j in range(3):
@@ -152,7 +147,7 @@ if st.button('Recommend'):
             if idx < len(name):
                 with cols[j]:
                     poster_url = posters[idx]
-                    # Fallback URL if API response is empty or N/A
+                    # if API response is empty or N/A
                     if poster_url == "N/A" or not poster_url:
                         poster_url = "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=400"
 
